@@ -156,7 +156,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/product/count/by/brand-and-name")
     public ResponseEntity<ApiResponse> countProductsByBrandAndName(@RequestParam String brand, @RequestParam String name){
 
         try {
