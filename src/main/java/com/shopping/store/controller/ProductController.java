@@ -7,10 +7,7 @@ import com.shopping.store.service.product.IProductService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +32,19 @@ public class ProductController {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Error!",INTERNAL_SERVER_ERROR));
 
         }
+    }
+
+    @GetMapping("/product/{productId}/product")
+    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId){
+
+        try {
+            Product product = productService.getProductById(productId);
+            return ResponseEntity.ok(new ApiResponse("Success!", product));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
+
+
     }
 }
