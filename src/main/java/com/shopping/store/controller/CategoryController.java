@@ -1,6 +1,7 @@
 package com.shopping.store.controller;
 
 import com.shopping.store.exceptions.AlreadyExistsException;
+import com.shopping.store.exceptions.ResourceNotFoundException;
 import com.shopping.store.model.Category;
 import com.shopping.store.response.ApiResponse;
 import com.shopping.store.service.category.ICategoryService;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -42,6 +42,42 @@ public class CategoryController {
 
         } catch (AlreadyExistsException e) {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/category/{id}/category")
+    public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id){
+
+        try {
+            Category theCategory = categoryService.getCategoryById(id);
+            return ResponseEntity.ok(new ApiResponse("Found", theCategory));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/{name}/category")
+    public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name){
+
+        try {
+            Category theCategory = categoryService.getCategoryByName(name);
+            return ResponseEntity.ok(new ApiResponse("Found", theCategory));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @DeleteMapping("/category/{id}/category")
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id){
+
+        try {
+            categoryService.deleteCategoryById(id);
+            return ResponseEntity.ok(new ApiResponse("Found", null));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
 
