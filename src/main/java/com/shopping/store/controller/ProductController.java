@@ -3,6 +3,7 @@ package com.shopping.store.controller;
 import com.shopping.store.exceptions.ResourceNotFoundException;
 import com.shopping.store.model.Product;
 import com.shopping.store.request.AddProductRequest;
+import com.shopping.store.request.ProductUpdateRequest;
 import com.shopping.store.response.ApiResponse;
 import com.shopping.store.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,18 @@ public class ProductController {
 
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/product/{productId}/update")
+    public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long productId){
+
+        try {
+            Product updatedProduct = productService.updateProduct(request, productId);
+            return ResponseEntity.ok(new ApiResponse("Update product success",updatedProduct));
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
 }
