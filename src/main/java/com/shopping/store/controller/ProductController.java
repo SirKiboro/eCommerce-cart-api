@@ -114,11 +114,25 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/{name}/products")
+    @GetMapping("/products/by/{name}")
     public ResponseEntity<ApiResponse> getProductsByName(@PathVariable String name){
 
         try {
             List<Product> products = productService.getProductsByName(name);
+            if (products.isEmpty()){
+                return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found", null));
+            }
+            return ResponseEntity.ok(new ApiResponse("success", products));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("error!", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/products/by/brand")
+    public ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String brand){
+
+        try {
+            List<Product> products = productService.getProductsByBrand(brand);
             if (products.isEmpty()){
                 return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found", null));
             }
