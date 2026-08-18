@@ -2,6 +2,7 @@ package com.shopping.store.controller;
 
 import com.shopping.store.exceptions.ResourceNotFoundException;
 import com.shopping.store.model.Product;
+import com.shopping.store.repository.ProductRepository;
 import com.shopping.store.request.AddProductRequest;
 import com.shopping.store.request.ProductUpdateRequest;
 import com.shopping.store.response.ApiResponse;
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpStatus.*;
 public class ProductController {
 
     private final IProductService productService;
+    private final ProductRepository productRepository;
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts(){
@@ -79,6 +81,21 @@ public class ProductController {
 
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/by/{brandName}and{productName}")
+    public ResponseEntity<ApiResponse> getProductsByBrandAndName(@PathVariable String brandName, @PathVariable String productName){
+
+        try {
+            List<Product> products = productService.getProductsByBrandAndName(brandName, productName);
+            if (products.isEmpty()){
+                return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found", null));
+            }
+            return ResponseEntity.ok(new ApiResponse("success", products));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
     }
 }
