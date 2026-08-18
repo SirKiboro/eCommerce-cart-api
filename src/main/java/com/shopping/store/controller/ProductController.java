@@ -2,17 +2,16 @@ package com.shopping.store.controller;
 
 import com.shopping.store.exceptions.ResourceNotFoundException;
 import com.shopping.store.model.Product;
+import com.shopping.store.request.AddProductRequest;
 import com.shopping.store.response.ApiResponse;
 import com.shopping.store.service.product.IProductService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,7 +43,17 @@ public class ProductController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
+    }
 
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product){
 
+        try {
+            Product theProduct = productService.addProduct(product);
+            return ResponseEntity.ok(new ApiResponse("Add product success",theProduct));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 }
